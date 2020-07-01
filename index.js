@@ -53,9 +53,9 @@ app.get('/info', (req, res) => {
 //fetch all persons
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
-      response.json(persons)
+        response.json(persons)
     })
-  })
+})
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -74,12 +74,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
     response.status(204).end()
 })
-
-const generateId = () => {
-    //1 to 1000
-    const uniqueId = Math.floor(Math.random() * 1000) + 1
-    return uniqueId
-}
 
 app.post('/api/persons', (request, response) => {
     const { name, number } = request.body
@@ -101,15 +95,14 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    const person = {
+    const person = new Person({
         name: name,
         number: number,
-        id: generateId(),
-    }
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 const PORT = process.env.PORT || 3001
