@@ -1,8 +1,11 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person')
+
 const morgan = require('morgan')
-morgan.token('body', function (req, res) { 
+morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
 })
 
@@ -10,8 +13,6 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-
-
 
 let persons = [
     {
@@ -49,9 +50,12 @@ app.get('/info', (req, res) => {
 
 })
 
-app.get('/api/persons', (req, res) => {
-    res.json(persons)
-})
+//fetch all persons
+app.get('/api/persons', (request, response) => {
+    Person.find({}).then(persons => {
+      response.json(persons)
+    })
+  })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -81,7 +85,7 @@ app.post('/api/persons', (request, response) => {
     const { name, number } = request.body
     const nameMatch = persons.find(p => p.name === name)
 
-    if(nameMatch) {
+    if (nameMatch) {
         return response.status(400).json({
             error: 'name must be unique'
         })
@@ -107,6 +111,7 @@ app.post('/api/persons', (request, response) => {
 
     response.json(person)
 })
+
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
