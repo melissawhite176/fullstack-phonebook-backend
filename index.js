@@ -5,6 +5,7 @@ const cors = require('cors')
 const Person = require('./models/person')
 
 const morgan = require('morgan')
+const { request, response } = require('express')
 morgan.token('body', function (req, res) {
     return JSON.stringify(req.body)
 })
@@ -109,3 +110,16 @@ app.post('/api/persons', (request, response) => {
 const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
+
+
+const errorHandler = (error, request, response, next) => {
+    console.log(error.message)
+
+    if(error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
