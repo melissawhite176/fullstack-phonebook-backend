@@ -14,21 +14,21 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+  name: String,
+  number: String,
 })
 
 const Person = mongoose.model('Person', personSchema)
 
 //**show all phonebook entries if password is the only parameter provided**
 if (process.argv.length === 3) {
-    Person.find({}).then(result => {
-        console.log('phonebook:')
-        result.forEach(person => {
-            console.log(`${person.name} ${person.number}`)
-        })
-        mongoose.connection.close()
+  Person.find({}).then(result => {
+    console.log('phonebook:')
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
     })
+    mongoose.connection.close()
+  })
 }
 
 //**add person**
@@ -38,22 +38,22 @@ if (process.argv.length === 3) {
 // })
 
 
-//**add person using command line** 
+//**add person using command line**
 //**Notice that if the name contains whitespace characters, it must be enclosed in quotes**
 //**example: "Maggie Nelson" 333-444-5555**
 
 if (process.argv.length === 5) {
 
-const name = process.argv[3]
-const number = process.argv[4]
+  const name = process.argv[3]
+  const number = process.argv[4]
 
-const person = new Person({
+  const person = new Person({
     name: name,
     number: number,
-})
+  })
 
-person.save().then(result => {
+  person.save().then(() => {
     console.log(`Added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
-})
+  })
 }
